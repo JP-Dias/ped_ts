@@ -168,44 +168,17 @@ ggplot(dados_sazonal, aes(x = data, y = sazonal, color = setor)) +
   scale_color_viridis_d(option = "D")+
   facet_wrap(~setor)
 
-dados_sazonal$data <- as.Date(paste0(floor(dados_sazonal$data), "-", 
-                                     (dados_sazonal$data %% 1) * 12 + 1, "-01"), 
-                              format = "%Y-%m-%d")
 ggplot(dados_sazonal, aes(x = data, y = sazonal, color = setor)) +
-  scale_x_date(limits = as.Date(c("2023-01-01", "2023-12-31")),expand = c(0,0)) +
   geom_line() +
   labs(title = "Componentes Sazonais por Setor",
        x = "Data",
        y = "Componente Sazonal") +
   theme_bw() +
-  facet_wrap(~setor,scales = "free")
-
-
-
-
-lista_sazonal <- list()
-
-# Colunas de interesse (exceto a coluna de datas)
-colunas <- names(tab1)[-1]
-
-# Loop para decompor cada série temporal e armazenar o resultado
-for (coluna in colunas) {
-  base <- ts(tab1[[coluna]], start = c(2001, 3), frequency = 12) |> na_seadec() |> mstl()
-  sazonal <- base[, "Seasonal12"]
-  dados <- data.frame(data = time(base), sazonal = sazonal, setor = coluna)
-  lista_sazonal[[coluna]] <- dados
-}
-
-# Combine todos os data frames em um único
-dados_sazonal <- bind_rows(lista_sazonal)
-
-# Criar o gráfico
-ggplot(dados_sazonal, aes(x = data, y = sazonal, color = setor)) +
-  geom_line() +
-  labs(title = "Componentes Sazonais por Setor",
-       x = "Data",
-       y = "Componente Sazonal") +
-  theme_minimal() +
+  theme(strip.background = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_blank(),
+        panel.border = element_rect(colour = "black", fill=NA, size=.5)) +
+  scale_color_viridis_d(option = "D")+
   facet_wrap(~setor)
 
 # Desemprego
