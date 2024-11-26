@@ -9,7 +9,7 @@ for (pkg in required_packages) {
 }
 
 # Diretório ----
-caminho <- "dados/Anexo Estatistico PED-DF JULHO 2024.xlsx"
+caminho <- "dados/Anexo Estatistico PED-DF OUTBRO 2024.xlsx"
 
 # Dados ----
 # Lê dados brutos
