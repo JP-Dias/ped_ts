@@ -9,7 +9,7 @@ for (pkg in required_packages) {
 }
 
 # Diretório ----
-caminho <- "dados/Anexo Estatistico PED-DF OUTBRO 2024.xlsx"
+caminho <- "dados/Anexo Estatistico PED-DF OUTUBRO 2024.xlsx"
 
 # Dados ----
 # Lê dados brutos
@@ -90,11 +90,9 @@ tab8 <- tab8 |>
   mutate(data = as.Date(paste(anos, meses_numeros, "01", sep = "-"))) |> 
   mutate(across(-data, ~ na_if(.x, "-"))) |> 
   mutate(across(-data, as.numeric)) |> 
-  select(data,everything()) |> 
-  filter(data > "2010-12-01") 
+  select(data,everything())
 
-
-dados <- read_excel(paste0("dados/","Anexo Estatistico PED-DF JULHO 2024.xlsx"), sheet = "Tab10", skip = 8)
+dados <- read_excel("dados/Anexo Estatistico PED-DF OUTUBRO 2024.xlsx", sheet = "Tab10", skip = 8)
 
 # Apaga colunas desnecessárias
 tab10 <- dados[-c((nrow(dados)-16):nrow(dados)),-c(2,6,10)] |> na.omit()
@@ -122,6 +120,19 @@ tab10 <- tab10 |>
   select(data,everything()) |> 
   filter(data > "2010-12-01") 
 
+
+dados <- read_excel("dados/Anexo Estatistico PED-DF OUTUBRO 2024.xlsx", sheet = "Tab23", skip = 7)
+
+tab23 <- dados[-c((nrow(dados)-6):nrow(dados)),c(1:4)] |> na.omit()
+
+names(tab23) <- c("mes_ano","media_horas","mediana_horas","perc_44_mais")
+
+tab23 <- tab23 |> 
+select(-mes_ano) |> 
+  mutate(data = as.Date(paste(anos, meses_numeros, "01", sep = "-"))) |> 
+  mutate(across(-data, ~ na_if(.x, "-"))) |> 
+  mutate(across(-data, as.numeric)) |> 
+  select(data,everything()) 
 
 
 lista_sazonal <- list()
@@ -181,56 +192,63 @@ ggplot(dados_sazonal, aes(x = data, y = sazonal, color = setor)) +
   scale_color_viridis_d(option = "D")+
   facet_wrap(~setor)
 
-# Desemprego
-ts(tab1$tx_desemp, start = c(2001, 3), frequency = 12) |> na_seadec() |> stl(t.window=13,s.window = "periodic",robust = T) |> autoplot()
-ts(tab1$tx_desemp, start = c(2001, 3), frequency = 12) |> na_seadec() |> stl(s.window=13) |> autoplot()
-
-# Participaçao
-ts(tab1$tx_part, start = c(2001, 3), frequency = 12) |> na_seadec() |> stl(t.window=13,s.window = "periodic",robust = T) |> autoplot()
-ts(tab1$tx_part, start = c(2001, 3), frequency = 12) |> na_seadec() |> stl(s.window=13) |> autoplot()
-
-
-# Industria
-ts(tab8$industria, start = c(2011, 1), frequency = 12) |> na_seadec() |> stl(t.window=13,s.window = "periodic",robust = T) |> autoplot()
-ts(tab8$industria, start = c(2011, 1), frequency = 12) |> na_seadec() |> stl(s.window=13) |> autoplot()
-
-# Construção
-ts(tab8$construcao, start = c(2011, 1), frequency = 12) |> na_seadec() |> stl(t.window=13,s.window = "periodic",robust = T) |> autoplot()
-ts(tab8$construcao, start = c(2011, 1), frequency = 12) |> na_seadec() |> stl(s.window=13) |> autoplot()
-
-# Comércio
-ts(tab8$comercio, start = c(2011, 1), frequency = 12) |> na_seadec() |> stl(t.window=13,s.window = "periodic",robust = T) |> autoplot()
-ts(tab8$comercio, start = c(2011, 1), frequency = 12) |> na_seadec() |> stl(s.window=13) |> autoplot()
-
-# Serviços
-ts(tab8$servicos, start = c(2011, 1), frequency = 12) |> na_seadec() |> stl(t.window=13,s.window = "periodic",robust = T) |> autoplot()
-ts(tab8$servicos, start = c(2011, 1), frequency = 12) |> na_seadec() |> stl(s.window=13) |> autoplot()
-
-# Adm Púb
-ts(tab8$adm_publica, start = c(2011, 1), frequency = 12) |> na_seadec() |> stl(t.window=13,s.window = "periodic",robust = T) |> autoplot()
-ts(tab8$adm_publica, start = c(2011, 1), frequency = 12) |> na_seadec() |> stl(s.window=13) |> autoplot()
-
-
-ts(tab1$tx_desemp, start = c(2001, 3), frequency = 12) |> na_seadec() |> ggsubseriesplot()
-ts(tab1$tx_part, start = c(2001, 3), frequency = 12) |> na_seadec() |> ggsubseriesplot()
-
-
-ts(tab8$industria, start = c(2011, 1), frequency = 12) |> na_seadec() |> ggsubseriesplot()
-ts(tab8$construcao, start = c(2011, 1), frequency = 12) |> na_seadec() |> ggsubseriesplot()
-ts(tab8$comercio, start = c(2011, 1), frequency = 12) |> na_seadec() |> ggsubseriesplot()
-ts(tab8$servicos, start = c(2011, 1), frequency = 12) |> na_seadec() |> ggsubseriesplot()
-ts(tab8$adm_publica, start = c(2011, 1), frequency = 12) |> na_seadec() |> ggsubseriesplot()
 
 
 
 
-ts(tab10$educacao, start = c(2011, 1), frequency = 12) |> na_seadec() |> stl(t.window=13,s.window = "periodic",robust = T) |> autoplot()
-ts(tab10$educacao, start = c(2011, 1), frequency = 12) |> na_seadec() |>  stl(s.window=13) |> autoplot()
 
-ts(tab10$transporte, start = c(2011, 1), frequency = 12) |> na_seadec() |> stl(t.window=13,s.window = "periodic",robust = T) |> autoplot()
-ts(tab10$transporte, start = c(2011, 1), frequency = 12) |> na_seadec() |>  mstl() |> autoplot()
 
-ts(tab10$informacao_comunicacao, start = c(2011, 1), frequency = 12) |> na_seadec() |> stl(t.window=13,s.window = "periodic",robust = T) |> autoplot()
-ts(tab10$informacao_comunicacao, start = c(2011, 1), frequency = 12) |> na_seadec() |>  mstl() |> autoplot()
 
+# 
+# # Desemprego
+# ts(tab1$tx_desemp, start = c(2001, 3), frequency = 12) |> na_seadec() |> stl(t.window=13,s.window = "periodic",robust = T) |> autoplot()
+# ts(tab1$tx_desemp, start = c(2001, 3), frequency = 12) |> na_seadec() |> stl(s.window=13) |> autoplot()
+# 
+# # Participaçao
+# ts(tab1$tx_part, start = c(2001, 3), frequency = 12) |> na_seadec() |> stl(t.window=13,s.window = "periodic",robust = T) |> autoplot()
+# ts(tab1$tx_part, start = c(2001, 3), frequency = 12) |> na_seadec() |> stl(s.window=13) |> autoplot()
+# 
+# 
+# # Industria
+# ts(tab8$industria, start = c(2011, 1), frequency = 12) |> na_seadec() |> stl(t.window=13,s.window = "periodic",robust = T) |> autoplot()
+# ts(tab8$industria, start = c(2011, 1), frequency = 12) |> na_seadec() |> stl(s.window=13) |> autoplot()
+# 
+# # Construção
+# ts(tab8$construcao, start = c(2011, 1), frequency = 12) |> na_seadec() |> stl(t.window=13,s.window = "periodic",robust = T) |> autoplot()
+# ts(tab8$construcao, start = c(2011, 1), frequency = 12) |> na_seadec() |> stl(s.window=13) |> autoplot()
+# 
+# # Comércio
+# ts(tab8$comercio, start = c(2011, 1), frequency = 12) |> na_seadec() |> stl(t.window=13,s.window = "periodic",robust = T) |> autoplot()
+# ts(tab8$comercio, start = c(2011, 1), frequency = 12) |> na_seadec() |> stl(s.window=13) |> autoplot()
+# 
+# # Serviços
+# ts(tab8$servicos, start = c(2011, 1), frequency = 12) |> na_seadec() |> stl(t.window=13,s.window = "periodic",robust = T) |> autoplot()
+# ts(tab8$servicos, start = c(2011, 1), frequency = 12) |> na_seadec() |> stl(s.window=13) |> autoplot()
+# 
+# # Adm Púb
+# ts(tab8$adm_publica, start = c(2011, 1), frequency = 12) |> na_seadec() |> stl(t.window=13,s.window = "periodic",robust = T) |> autoplot()
+# ts(tab8$adm_publica, start = c(2011, 1), frequency = 12) |> na_seadec() |> stl(s.window=13) |> autoplot()
+# 
+# 
+# ts(tab1$tx_desemp, start = c(2001, 3), frequency = 12) |> na_seadec() |> ggsubseriesplot()
+# ts(tab1$tx_part, start = c(2001, 3), frequency = 12) |> na_seadec() |> ggsubseriesplot()
+# 
+# 
+# ts(tab8$industria, start = c(2011, 1), frequency = 12) |> na_seadec() |> ggsubseriesplot()
+# ts(tab8$construcao, start = c(2011, 1), frequency = 12) |> na_seadec() |> ggsubseriesplot()
+# ts(tab8$comercio, start = c(2011, 1), frequency = 12) |> na_seadec() |> ggsubseriesplot()
+# ts(tab8$servicos, start = c(2011, 1), frequency = 12) |> na_seadec() |> ggsubseriesplot()
+# ts(tab8$adm_publica, start = c(2011, 1), frequency = 12) |> na_seadec() |> ggsubseriesplot()
+# 
+# 
+# 
+# 
+# ts(tab10$educacao, start = c(2011, 1), frequency = 12) |> na_seadec() |> stl(t.window=13,s.window = "periodic",robust = T) |> autoplot()
+# ts(tab10$educacao, start = c(2011, 1), frequency = 12) |> na_seadec() |>  stl(s.window=13) |> autoplot()
+# 
+# ts(tab10$transporte, start = c(2011, 1), frequency = 12) |> na_seadec() |> stl(t.window=13,s.window = "periodic",robust = T) |> autoplot()
+# ts(tab10$transporte, start = c(2011, 1), frequency = 12) |> na_seadec() |>  mstl() |> autoplot()
+# 
+# ts(tab10$informacao_comunicacao, start = c(2011, 1), frequency = 12) |> na_seadec() |> stl(t.window=13,s.window = "periodic",robust = T) |> autoplot()
+# ts(tab10$informacao_comunicacao, start = c(2011, 1), frequency = 12) |> na_seadec() |>  mstl() |> autoplot()
 
